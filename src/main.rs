@@ -29,7 +29,7 @@ fn main() {
     assert!(f64::abs((0.3 - 0.2) - 0.1) < 1e-10);
     assert!(f64::abs(1.0 - (1 as f64)) < 1e-10);
 
-    /// array
+    /// Array, Vector, and Slice
     // new array
     let arr = ["eins", "zwei"];
     let mut array= [0.0; 10 ];
@@ -53,11 +53,47 @@ fn main() {
         *i = rand::thread_rng().gen_range(1, 100);
     }
 
-    //vector
+    // new vector
     let vec = vec![1, 2, 3];
     let mut vec2 = Vec::new();
+
+    // append data to vector
     vec2.push(1);
     vec2.push(2);
     vec2.push(3);
+
+    // read vector
+
+    assert_eq!(vec[0], 1);
+    assert_eq!(vec[1], 2);
+
+    // write vector
+    vec2[0] = 0;
+    vec2[1] = 1;
+    vec2[2] = 2;
+
+
+    // iter read vector
+    // #1   by index
+    for i in 0..(vec.len()) {
+        println!("{}", vec[i]);
+    }
+
+    // #2   by iterator
+    for ele in vec.iter() {
+        println!("{}", ele);
+    }
+
+    // write vector
+    // # 1 by index
+    for i in 0..vec2.len() {
+        vec2[i] = vec2[i] + vec2[i];
+    }
+
+    // #2 by iterator
+    for ele in vec2.iter_mut() {
+        * ele = *ele + *ele;
+    }
+
 
 }

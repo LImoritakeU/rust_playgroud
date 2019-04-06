@@ -1,0 +1,9 @@
+[package]
+name = "playground"
+version = "0.1.0"
+authors = ["shihhao"]
+edition = "2018"
+
+[dependencies]
+regex = "1.1.5"
+rand = "0.6.5"

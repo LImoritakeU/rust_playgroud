@@ -1,10 +1,34 @@
+use std::vec::Vec;
+
 extern crate rand;
 
 use rand::Rng;
 
+fn bubble_sort(slice: &mut Vec<i32>) -> Vec<i32> {
+    let num = slice.len() - 1;
+    let len = slice.len();
+
+    for _ in 0..num {
+        for index in 0..num {
+
+            let x = slice[(len - 2) - index];
+            let y = slice[(len - 1) - index];
+            if x <= y {
+                slice[(len - 2) - index] = x;
+                slice[(len - 1) - index] = y;
+
+            } else {
+                slice[(len - 1) - index] = x;
+                slice[(len - 2) - index] = y;
+            }
+        }
+        println!("slice: {:?}", slice);
+    }
+    slice.to_vec()
+}
+
 
 fn main() {
-
     /* min and max */
     // signed int
     println!("i8 min: {}, max: {}", i8::min_value(), i8::max_value());
@@ -20,19 +44,25 @@ fn main() {
     println!("u64 mun: {}, max: {}", u64::min_value(), u64::max_value());
 
     // variable-width
-    println!("isize min: {}, max: {}", isize::min_value(), isize::max_value());
-    println!("usize min: {}, max: {}", usize::min_value(), usize::max_value());
+    println!(
+        "isize min: {}, max: {}",
+        isize::min_value(),
+        isize::max_value()
+    );
+    println!(
+        "usize min: {}, max: {}",
+        usize::min_value(),
+        usize::max_value()
+    );
 
     // float
-
-
     assert!(f64::abs((0.3 - 0.2) - 0.1) < 1e-10);
     assert!(f64::abs(1.0 - (1 as f64)) < 1e-10);
 
-    /// Array, Vector, and Slice
+    /* Array, Vector, and Slice */
     // new array
     let arr = ["eins", "zwei"];
-    let mut array= [0.0; 10 ];
+    let mut array = [0.0; 10];
 
     // read array
     assert_eq!(arr[0], "eins");
@@ -72,7 +102,6 @@ fn main() {
     vec2[1] = 1;
     vec2[2] = 2;
 
-
     // iter read vector
     // #1   by index
     for i in 0..(vec.len()) {
@@ -92,8 +121,44 @@ fn main() {
 
     // #2 by iterator
     for ele in vec2.iter_mut() {
-        * ele = *ele + *ele;
+        *ele = *ele + *ele;
     }
 
+    // get length of vector
+    assert_eq!(vec.len(), 3);
 
+    // pop data
+    vec2 = vec![1, 2, 3];
+    assert_eq!(vec2.pop().unwrap(), 3);
+    assert_eq!(vec2, vec![1, 2]);
+
+    // insert ele in vec (index, value)
+    vec2.insert(1, 99);
+    assert_eq!(vec2, vec![1, 99, 2]);
+
+    // remove ele in vec
+    assert_eq!(vec2.remove(1), 99);
+
+    /* slice is the reference of array or vector */
+    // new slice
+    // # 1
+    let _s = [1, 2, 3, 4, 5];
+    let slice_arr = &_s;
+
+    // # 2
+    let slice_arr = &[1, 2, 3, 4, 5];
+    // # 3 allow to write
+    let slice_arr = &mut [1, 2, 3, 4, 5];
+
+
+    /* practice: implement insertion sort, bubble sort, selection sort, bucket sort*/
+
+    // bubble sort
+    let mut rng = rand::thread_rng();
+    let mut numbers: Vec<i32> = Vec::new();
+    for _ in 0..10 {
+        numbers.push(rng.gen_range(1, 100))
+    }
+    println!("{:?}", numbers);
+    println!("bubble sort: {:?}", bubble_sort(&mut numbers));
 }

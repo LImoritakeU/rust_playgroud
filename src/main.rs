@@ -1,10 +1,22 @@
 extern crate rand;
 
 use rand::Rng;
+use std::intrinsics::write_bytes;
+use std::fmt::{Display, Formatter};
 
 
 fn main() {
+//    debug_practice();
+//    display_practice();
+//    formatting();
+//    tuple_practice();
+//    enums_practices()
+//    conversion_practice();
+    assign_practice();
 
+}
+
+fn num() {
     /* min and max */
     // signed int
     println!("i8 min: {}, max: {}", i8::min_value(), i8::max_value());
@@ -24,15 +36,102 @@ fn main() {
     println!("usize min: {}, max: {}", usize::min_value(), usize::max_value());
 
     // float
-
-
     assert!(f64::abs((0.3 - 0.2) - 0.1) < 1e-10);
     assert!(f64::abs(1.0 - (1 as f64)) < 1e-10);
+}
 
+
+fn debug_practice() {
+    #[derive(Debug)]
+    struct Person<'a> {
+        name: &'a str,
+        age: u8,
+    }
+
+    let name = "peter";
+    let age = 27;
+    let peter = Person { name, age };
+
+    // pretty print
+    println!("{:#?}", peter);
+}
+
+fn display_practice() {
+    use std::fmt;
+
+    struct Structure(i32);
+
+    impl fmt::Display for Structure {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "{}", self.0)
+        }
+    }
+
+    let s = Structure(1);
+    println!("{}", s);
+
+    let vector = vec![1, 2, 3, 4, 5];
+    println!("{:?}", vector);
+}
+
+fn formatting() {
+    use std::fmt::{self, Formatter, Display};
+
+    struct City {
+        name: &'static str,
+        lat: f32,
+        lon: f32,
+    }
+
+    impl Display for City {
+        fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+            let lat_c = if self.lat >= 0.0 { 'N' } else { 'S' };
+            let lon_c = if self.lon >= 0.0 { 'E' } else { 'W' };
+
+            write!(f, "{}: {:.3}°{} {:.3}°{}", self.name, self.lat.abs(), lat_c, self.lon.abs(), lon_c)
+        }
+    }
+
+    for city in [City{name: "Dublin", lat: 53.347778, lon: -6.259722}].iter() {
+        println!("{}", *city);
+    }
+
+}
+fn tuple_practice() {
+    fn reverse(pair: (i32, bool)) -> (bool, i32) {
+        let (integer, boolean) = pair;
+
+        (boolean, integer)
+    }
+
+    let long_tuple = (1u8, 2u16, 3u32, 4u64,
+                      -1i8, -2i16, -3i32, -4i64,
+                      0.1f32, 0.2f64,
+                      'a', true);
+    println!("long tuple {:?}", long_tuple);
+    // let too_long_tuple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+    // println!("too long tuple {:?}", too_long_tuple);
+
+
+    //named struct
+    struct Matrix(f32, f32, f32, f32);
+
+    impl Display for Matrix {
+        fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+            write!(f, "Matrix({:?}, {:?}, {:?}, {:?})", self.0, self.1, self.2, self.3)
+        }
+    }
+
+    let mtx = Matrix(1.2, 1.0, 2.0, 3.5);
+    println!("{}", mtx);
+
+}
+
+fn sequences() {
     /// Array, Vector, and Slice
     // new array
     let arr = ["eins", "zwei"];
-    let mut array= [0.0; 10 ];
+    let mut array = [0.0; 10];
 
     // read array
     assert_eq!(arr[0], "eins");
@@ -92,8 +191,163 @@ fn main() {
 
     // #2 by iterator
     for ele in vec2.iter_mut() {
-        * ele = *ele + *ele;
+        *ele = *ele + *ele;
+    }
+}
+
+fn enums_practices() {
+    enum WebEvent {
+        PageLoad,
+        PageUnload,
+        KeyPress(char),
+        Paste(String),
+        Click {x: i64, y: i64},
     }
 
+    fn inspect(event: WebEvent) {
+        match event {
+            WebEvent::PageLoad => println!("Page loaded"),
+            WebEvent::PageUnload => println!("Page unloaded"),
+            WebEvent::KeyPress(c)=> println!("press {}", c),
+            WebEvent::Paste(s) => println!("paste {}", s),
+            WebEvent::Click {x, y} => {
+                println!("clicked at x, y = {}, {}", x, y);
+            },
+        }
+    }
+
+    let pressed = WebEvent::KeyPress('x');
+    let pasted = WebEvent::Paste("My text".to_owned());
+    let click = WebEvent::Click {x: 20, y: 80};
+    let load = WebEvent::PageLoad;
+
+    inspect(pressed);
+    inspect(pasted);
+    inspect(click);
+    inspect(load);
+
+    /* use */
+
+    enum Status {
+        Rich,
+        Poor,
+    }
+
+    enum Work {
+        Civilian,
+        Soldier,
+    }
+
+    use Status::{Poor, Rich};
+    use Work::*;
+
+    // Equivalent to `Status::Poor`
+    let status = Poor;
+
+    match status {
+        Rich => println!("rich!"),
+        Poor => println!("poor"),
+    }
 
 }
+
+fn conversion_practice () {
+
+    /* built-in casting "as"   */
+    let decimal: f32 = 65.4321;
+    let _int = decimal as u8;
+    let character = _int as char;
+
+    println!("Casting {} -> {} -> {} ", decimal, _int, character);
+
+
+    let decimal_f64 = decimal as f64;
+
+
+    /* from and into */
+
+    let my_str = "Hello";
+    let my_string = String::from(my_str);
+
+    use std::convert::From;
+
+    #[derive(Debug)]
+    struct Number {
+        value: i32
+    }
+
+    impl From<i32> for Number{
+        fn from(item: i32) -> Self {
+            Number { value: item}
+        }
+    }
+
+    let num = Number::from(30);
+    println!("My number is {:?}", num);
+    let _int = 5;
+    let num: Number = _int.into();
+    println!("My number is {:?}", num);
+
+
+    /* To and from string */
+    use std::string::ToString;
+
+    struct Circle {
+        radius: i32
+    }
+
+    impl ToString for Circle {
+        fn to_string(&self) -> String {
+            format!("Circle of radius {:?}", self.radius)
+        }
+    }
+
+    let circle = Circle { radius: 7 };
+    println!("{}", circle.to_string());
+
+    let parsed_int: i32 = "5".parse().unwrap();
+    let turbo_parsed = "10".parse::<i32>().unwrap();
+    let float_parsed = "10".parse::<f64>().unwrap();
+
+    println!("{:.2}", float_parsed);
+
+}
+
+fn assign_practice(){
+    let number = Some(7);
+    let letter: Option<i32> = None;
+    let emoticon: Option<i32> = None;
+
+    if let Some(i) = number {
+        println!("Match {:?}!", i);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

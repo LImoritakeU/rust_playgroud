@@ -1,6 +1,7 @@
 use std::vec::Vec;
 
 extern crate rand;
+extern crate chrono;
 
 use rand::Rng;
 use std::intrinsics::write_bytes;
@@ -8,7 +9,12 @@ use std::fmt::{Display, Formatter};
 
 mod practice_57;
 
-use practice_57::count_str::count_str;
+//use practice_57::practice02::count_str;
+//use practice_57::practice03::use_quote;
+//use practice_57::practice05::calculate;
+//use practice_57::practice06::calculate_retiration;
+//use practice_57::practice07::rectangle;
+use practice_57::practice08::pizza_group;
 
 
 fn bubble_sort(slice: &mut Vec<i32>) -> Vec<i32> {
@@ -43,7 +49,12 @@ fn main() {
 //    assign_practice();
 //    lambda_practice()
 
-    count_str();
+//    count_str();
+//    use_quote();
+//    calculate();
+//    calculate_retiration();
+//    rectangle();
+    pizza_group();
 }
 
 fn num() {

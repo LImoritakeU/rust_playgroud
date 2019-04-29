@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 regex = "1.1.5"
 rand = "0.6.5"
+chrono = "0.4"

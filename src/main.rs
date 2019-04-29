@@ -1,8 +1,42 @@
+use std::vec::Vec;
+
 extern crate rand;
+extern crate chrono;
 
 use rand::Rng;
 use std::intrinsics::write_bytes;
 use std::fmt::{Display, Formatter};
+
+mod practice_57;
+
+//use practice_57::practice02::count_str;
+//use practice_57::practice03::use_quote;
+//use practice_57::practice05::calculate;
+//use practice_57::practice06::calculate_retiration;
+//use practice_57::practice07::rectangle;
+use practice_57::practice08::pizza_group;
+
+
+fn bubble_sort(slice: &mut Vec<i32>) -> Vec<i32> {
+    let num = slice.len() - 1;
+    let len = slice.len();
+
+    for _ in 0..num {
+        for index in 0..num {
+            let x = slice[(len - 2) - index];
+            let y = slice[(len - 1) - index];
+            if x <= y {
+                slice[(len - 2) - index] = x;
+                slice[(len - 1) - index] = y;
+            } else {
+                slice[(len - 1) - index] = x;
+                slice[(len - 2) - index] = y;
+            }
+        }
+        println!("slice: {:?}", slice);
+    }
+    slice.to_vec()
+}
 
 
 fn main() {
@@ -12,8 +46,15 @@ fn main() {
 //    tuple_practice();
 //    enums_practices()
 //    conversion_practice();
-    assign_practice();
+//    assign_practice();
+//    lambda_practice()
 
+//    count_str();
+//    use_quote();
+//    calculate();
+//    calculate_retiration();
+//    rectangle();
+    pizza_group();
 }
 
 fn num() {
@@ -32,8 +73,16 @@ fn num() {
     println!("u64 mun: {}, max: {}", u64::min_value(), u64::max_value());
 
     // variable-width
-    println!("isize min: {}, max: {}", isize::min_value(), isize::max_value());
-    println!("usize min: {}, max: {}", usize::min_value(), usize::max_value());
+    println!(
+        "isize min: {}, max: {}",
+        isize::min_value(),
+        isize::max_value()
+    );
+    println!(
+        "usize min: {}, max: {}",
+        usize::min_value(),
+        usize::max_value()
+    );
 
     // float
     assert!(f64::abs((0.3 - 0.2) - 0.1) < 1e-10);
@@ -92,15 +141,16 @@ fn formatting() {
         }
     }
 
-    for city in [City{name: "Dublin", lat: 53.347778, lon: -6.259722}].iter() {
+    for city in [City { name: "Dublin", lat: 53.347778, lon: -6.259722 }].iter() {
         println!("{}", *city);
     }
-
 }
+
 fn tuple_practice() {
     fn reverse(pair: (i32, bool)) -> (bool, i32) {
         let (integer, boolean) = pair;
 
+        /* Array, Vector, and Slice */
         (boolean, integer)
     }
 
@@ -124,7 +174,6 @@ fn tuple_practice() {
 
     let mtx = Matrix(1.2, 1.0, 2.0, 3.5);
     println!("{}", mtx);
-
 }
 
 fn sequences() {
@@ -172,6 +221,27 @@ fn sequences() {
     vec2[2] = 2;
 
 
+    // pop data
+    vec2 = vec![1, 2, 3];
+    assert_eq!(vec2.pop().unwrap(), 3);
+    assert_eq!(vec2, vec![1, 2]);
+
+    // insert ele in vec (index, value)
+    vec2.insert(1, 99);
+    assert_eq!(vec2, vec![1, 99, 2]);
+
+
+    /* slice is the reference of array or vector */
+    // new slice
+    // # 1
+    let _s = [1, 2, 3, 4, 5];
+    let slice_arr = &_s;
+
+    // # 2
+    let slice_arr = &[1, 2, 3, 4, 5];
+    // # 3 allow to write
+    let slice_arr = &mut [1, 2, 3, 4, 5];
+
     // iter read vector
     // #1   by index
     for i in 0..(vec.len()) {
@@ -201,24 +271,24 @@ fn enums_practices() {
         PageUnload,
         KeyPress(char),
         Paste(String),
-        Click {x: i64, y: i64},
+        Click { x: i64, y: i64 },
     }
 
     fn inspect(event: WebEvent) {
         match event {
             WebEvent::PageLoad => println!("Page loaded"),
             WebEvent::PageUnload => println!("Page unloaded"),
-            WebEvent::KeyPress(c)=> println!("press {}", c),
+            WebEvent::KeyPress(c) => println!("press {}", c),
             WebEvent::Paste(s) => println!("paste {}", s),
-            WebEvent::Click {x, y} => {
+            WebEvent::Click { x, y } => {
                 println!("clicked at x, y = {}, {}", x, y);
-            },
+            }
         }
     }
 
     let pressed = WebEvent::KeyPress('x');
     let pasted = WebEvent::Paste("My text".to_owned());
-    let click = WebEvent::Click {x: 20, y: 80};
+    let click = WebEvent::Click { x: 20, y: 80 };
     let load = WebEvent::PageLoad;
 
     inspect(pressed);
@@ -248,11 +318,9 @@ fn enums_practices() {
         Rich => println!("rich!"),
         Poor => println!("poor"),
     }
-
 }
 
-fn conversion_practice () {
-
+fn conversion_practice() {
     /* built-in casting "as"   */
     let decimal: f32 = 65.4321;
     let _int = decimal as u8;
@@ -276,9 +344,9 @@ fn conversion_practice () {
         value: i32
     }
 
-    impl From<i32> for Number{
+    impl From<i32> for Number {
         fn from(item: i32) -> Self {
-            Number { value: item}
+            Number { value: item }
         }
     }
 
@@ -309,11 +377,59 @@ fn conversion_practice () {
     let turbo_parsed = "10".parse::<i32>().unwrap();
     let float_parsed = "10".parse::<f64>().unwrap();
 
-    println!("{:.2}", float_parsed);
+
+    /* practice: implement insertion sort, bubble sort, selection sort, bucket sort*/
+
+    // bubble sort
+    let mut rng = rand::thread_rng();
+    let mut numbers: Vec<i32> = Vec::new();
+    for _ in 0..10 {
+        numbers.push(rng.gen_range(1, 100))
+    }
+    println!("{:?}", numbers);
+    println!("bubble sort: {:?}", bubble_sort(&mut numbers));
+}
+
+
+fn lambda_practice() {
+    use std::mem;
+
+    let color = "Green";
+    let print = || println!("color: {}", color);
+
+    print();
+    print();
+
+    let mut count = 0;
+
+    let mut inc = || {
+        count += 1;
+        println!("count: {} ", count);
+    };
+
+    inc();
+    inc();
+
+    //let _reborrow = &mut count;
+    inc();
+
+    let movable = Box::new(3);
+
+    let consume = || {
+        println!("movable: {:?}", movable);
+        mem::drop(movable);
+    };
+
+//    consume();
+    consume();
+
+
+
 
 }
 
-fn assign_practice(){
+
+fn assign_practice() {
     let number = Some(7);
     let letter: Option<i32> = None;
     let emoticon: Option<i32> = None;
@@ -322,8 +438,22 @@ fn assign_practice(){
         println!("Match {:?}!", i);
     }
 
-}
+    // Suffixed literals, their types are known at initialization
+    let x = 1u8;
+    let y = 2u32;
+    let z = 3f32;
 
+    // Unsuffixed literal, their types depend on how they are used
+    let i = 1;
+    let f = 1.0;
+
+    // `size_of_val` returns the size of a variable in bytes
+    println!("size of `x` in bytes: {}", std::mem::size_of_val(&x));
+    println!("size of `y` in bytes: {}", std::mem::size_of_val(&y));
+    println!("size of `z` in bytes: {}", std::mem::size_of_val(&z));
+    println!("size of `i` in bytes: {}", std::mem::size_of_val(&i));
+    println!("size of `f` in bytes: {}", std::mem::size_of_val(&f));
+}
 
 
 
